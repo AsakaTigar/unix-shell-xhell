@@ -1,0 +1,46 @@
+# Compiled binaries
+xhell/xhell
+xhell/obj/
+*.o
+*.out
+*.exe
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+Aoduo_venv/
+venv/
+ENV/
+
+# Shell history and logs
+.xhell_history
+.xhell_log
+*.log
+
+# Workspace files
+demo_workspace/*
+!demo_workspace/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/
+
+# Temporary files
+*.tmp
+*.bak
