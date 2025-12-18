@@ -1,197 +1,196 @@
-# XShell
+# XShell - 类 Unix Shell 实现
 
-A Unix-like shell implementation written in C, featuring pipeline support, I/O redirection, built-in commands, and a modern Streamlit web interface for demonstration.
+一个用 C 语言编写的类 Unix Shell，支持管道、I/O 重定向、内置命令，并配备现代化的 Streamlit Web 演示界面。
 
-## 🚀 Features
+## 🚀 核心特性
 
-### Core Shell Capabilities
-- **Multi-level Pipelines**: Chain commands with `|` operator (`cmd1 | cmd2 | cmd3`)
-- **I/O Redirection**: Support for `<`, `>`, `>>`, and `2>` operators
-- **Built-in Commands**: 18+ built-in commands including file operations, system utilities
-- **External Program Execution**: Execute system binaries via `fork()` + `execv()`
-- **Command History**: Persistent command history across sessions
+### Shell 基础功能
+- **多级管道**：通过 `|` 连接命令（如 `cmd1 | cmd2 | cmd3`）
+- **I/O 重定向**：支持 `<`、`>`、`>>` 和 `2>` 操作符
+- **内置命令**：18+ 内置命令，涵盖文件操作、系统工具
+- **外部程序执行**：通过 `fork()` + `execv()` 调用系统程序
+- **命令历史**：持久化历史记录，跨会话保存
 
-### Advanced Features
-- **xsearch**: Built-in grep-like text search utility
-- **xcalc**: Command-line calculator for arithmetic operations
-- **xsh**: Script interpreter for `.x` script files
-- **xsysinfo**: System resource monitoring
-- **Colorized Output**: ANSI-colored `xls` output for better readability
+### 进阶特性
+- **xsearch**：内置文本搜索工具（类似 grep）
+- **xcalc**：命令行计算器，支持四则运算
+- **xsh**：脚本解释器，执行 `.x` 脚本文件
+- **xsysinfo**：系统资源监控
+- **彩色输出**：`xls` 支持 ANSI 彩色显示
 
-### Modern UI
-- **Streamlit Web Interface**: Interactive web-based terminal emulator
-- **One-Click Demos**: Pre-configured demonstration buttons
-- **Real-time Output**: Live command execution visualization
-- **File Workspace**: Integrated file browser and editor
+### 现代化 UI
+- **Streamlit Web 界面**：交互式网页终端模拟器
+- **一键演示**：预配置的演示按钮
+- **实时输出**：命令执行可视化
+- **文件工作区**：集成文件浏览器
 
-## 📦 Installation
+## 📦 安装使用
 
-### Prerequisites
+### 环境要求
 ```bash
-# Linux/Unix system
+# Linux/Unix 系统
 gcc make python3 pip
 ```
 
-### Build from Source
+### 编译运行
 ```bash
-# Clone the repository
+# 克隆项目
 git clone https://github.com/YOUR_USERNAME/xshell.git
 cd xshell
 
-# Compile the shell
+# 编译 Shell
 cd xhell
 make
 ./xhell
 ```
 
-### Run Web Interface
+### 启动 Web 界面
 ```bash
-# Install Python dependencies
+# 安装 Python 依赖
 pip install streamlit
 
-# Launch the demo
+# 启动演示
 ./start_demo.sh
 
-# Open browser at http://localhost:8501
+# 浏览器访问 http://localhost:8501
 ```
 
-## 🎮 Usage
+## 🎮 使用示例
 
-### Interactive Mode
+### 交互模式
 ```bash
 $ ./xhell
-[xshell]# xls -l          # List files with details
-[xshell]# xpwd            # Print working directory
-[xshell]# xcat file.txt   # Display file contents
-[xshell]# quit            # Exit shell
+[xshell]# xls -l          # 列出文件详细信息
+[xshell]# xpwd            # 显示当前目录
+[xshell]# xcat file.txt   # 查看文件内容
+[xshell]# quit            # 退出 Shell
 ```
 
-### Pipeline Examples
+### 管道操作
 ```bash
-# Count files in directory
+# 统计目录文件数
 xls | wc -l
 
-# Search in command output
+# 在输出中搜索
 xls -l | xsearch .txt
 
-# Chained grep-like operations
+# 链式搜索
 xcat log.txt | xsearch ERROR | wc -l
 ```
 
-### Redirection Examples
+### 重定向操作
 ```bash
-# Output redirection
+# 输出重定向
 xecho "Hello World" > output.txt
 
-# Append mode
-xecho "New line" >> output.txt
+# 追加模式
+xecho "新内容" >> output.txt
 
-# Input redirection
+# 输入重定向
 xcat < input.txt
 
-# Error redirection
+# 错误重定向
 xcp nonexist.txt dst.txt 2> error.log
 ```
 
-### Built-in Commands
-| Command | Description |
-|---------|-------------|
-| `xpwd` | Print working directory |
-| `xcd [dir]` | Change directory |
-| `xls [-l] [dir]` | List directory contents (with colors) |
-| `xtouch <file>` | Create empty file |
-| `xcat <file>` | Display file contents |
-| `xcp [-r] <src> <dst>` | Copy files/directories |
-| `xmv <src> <dst>` | Move/rename files |
-| `xrm [-r] <path>` | Remove files/directories |
-| `xecho [text]` | Print text to stdout |
-| `xsearch <term> [file]` | Search text in file or stdin |
-| `xcalc <n1> <op> <n2>` | Calculate arithmetic expression |
-| `xsh <script.x>` | Execute shell script |
-| `xhistory` | Show command history |
-| `xsysinfo` | Display system information |
-| `xhelp` | Show all available commands |
+### 内置命令表
+| 命令 | 说明 |
+|------|------|
+| `xpwd` | 显示当前工作目录 |
+| `xcd [dir]` | 切换目录 |
+| `xls [-l] [dir]` | 列出目录内容（彩色） |
+| `xtouch <file>` | 创建空文件 |
+| `xcat <file>` | 显示文件内容 |
+| `xcp [-r] <src> <dst>` | 复制文件/目录 |
+| `xmv <src> <dst>` | 移动/重命名文件 |
+| `xrm [-r] <path>` | 删除文件/目录 |
+| `xecho [text]` | 输出文本 |
+| `xsearch <term> [file]` | 文本搜索（支持管道） |
+| `xcalc <n1> <op> <n2>` | 计算算术表达式 |
+| `xsh <script.x>` | 执行脚本 |
+| `xhistory` | 查看命令历史 |
+| `xsysinfo` | 显示系统信息 |
+| `xhelp` | 显示所有命令 |
 
-## 🏗️ Architecture
+## 🏗️ 系统架构
 
 ```
 ┌─────────────────────────────────────────┐
-│           User Input (CLI/Web)          │
+│         用户输入 (CLI/Web)              │
 └──────────────────┬──────────────────────┘
                    │
                    ▼
          ┌─────────────────┐
-         │  Parser Module  │
+         │  解析器模块     │
          │  (parser.c)     │
          └────────┬────────┘
                   │
                   ▼
          ┌────────────────────┐
-         │  Pipeline Structure │
+         │  管道数据结构      │
          └────────┬───────────┘
                   │
                   ▼
     ┌─────────────────────────────┐
-    │   Executor (pipe.c)         │
-    │   - fork() child processes  │
-    │   - pipe() for IPC          │
-    │   - dup2() for redirection  │
+    │   执行器 (pipe.c)           │
+    │   - fork() 创建子进程       │
+    │   - pipe() 进程间通信       │
+    │   - dup2() 重定向           │
     └──────────┬──────────────────┘
                │
        ┌───────┴────────┐
        ▼                ▼
 ┌─────────────┐   ┌────────────────┐
-│  Built-in   │   │   External     │
-│  Commands   │   │   Programs     │
+│  内置命令   │   │   外部程序     │
 │(builtins.c) │   │(external_exec.c)│
 └─────────────┘   └────────────────┘
 ```
 
-## 📁 Project Structure
+## 📁 项目结构
 
 ```
 xshell/
-├── xhell/                  # Core C implementation
+├── xhell/                  # C 核心实现
 │   ├── src/
-│   │   ├── main.c         # REPL loop
-│   │   ├── parser.c       # Command parser
-│   │   ├── pipe.c         # Pipeline executor
-│   │   ├── builtin_commands.c
-│   │   ├── redirection.c
-│   │   ├── external_exec.c
-│   │   ├── utils.c
-│   │   └── logger.c
+│   │   ├── main.c         # REPL 主循环
+│   │   ├── parser.c       # 命令解析
+│   │   ├── pipe.c         # 管道执行
+│   │   ├── builtin_commands.c  # 内置命令
+│   │   ├── redirection.c  # 重定向处理
+│   │   ├── external_exec.c     # 外部程序
+│   │   ├── utils.c        # 工具函数
+│   │   └── logger.c       # 日志系统
 │   ├── include/
 │   │   └── xhell.h
 │   └── Makefile
-├── streamlit_demo/        # Web interface
+├── streamlit_demo/        # Web 演示界面
 │   ├── app.py
 │   └── xhell_wrapper.py
 ├── start_demo.sh
 └── README.md
 ```
 
-## 🔧 Technical Highlights
+## 🔧 技术亮点
 
-1. **Process Management**: Robust `fork()`/`execv()`/`waitpid()` implementation
-2. **IPC via Pipes**: Multi-stage pipeline with proper file descriptor management
-3. **Resource Safety**: Automatic cleanup of zombie processes and file descriptors
-4. **ANSI Colors**: Terminal output enhancement with escape sequences
-5. **Error Handling**: Comprehensive `perror()` and status code management
+1. **进程管理**：健壮的 `fork()`/`execv()`/`waitpid()` 实现
+2. **管道通信**：多级管道与文件描述符管理
+3. **资源安全**：自动回收僵尸进程和文件描述符
+4. **ANSI 彩色**：终端输出增强
+5. **错误处理**：完善的 `perror()` 和状态码管理
 
-## 📝 License
+## 📝 开源协议
 
-MIT License - feel free to use this project for learning and development.
+MIT License - **欢迎用于学习和开发**
 
-## 🙏 Acknowledgments
+## 🙏 致谢
 
-Built as a demonstration of Unix systems programming concepts including:
-- Process creation and management
-- Inter-process communication
-- File I/O and system calls
-- Signal handling
-- POSIX API usage
+本项目作为 Unix 系统编程的学习示例，涵盖以下核心概念：
+- 进程创建与管理
+- 进程间通信
+- 文件 I/O 与系统调用
+- 信号处理
+- POSIX API 使用
 
 ---
 
-**Note**: This is an educational project. For production use, consider mature shells like Bash, Zsh, or Fish.
+**注意**：这是一个教学项目。生产环境建议使用 Bash、Zsh 或 Fish 等成熟 Shell。
