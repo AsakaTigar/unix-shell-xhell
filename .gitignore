@@ -44,3 +44,12 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# PyInstaller build files
+build/
+dist/
+*.manifest
+*.egg-info/
+# 保留我们自定义的spec文件
+!XhellDemo.spec
+
