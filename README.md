@@ -1,6 +1,14 @@
 # XShell - 类 Unix Shell 实现
 
-一个用 C 语言编写的类 Unix Shell，支持管道、I/O 重定向、内置命令，并配备现代化的 Streamlit Web 演示界面。
+一个用 C 语言编写的类 Unix Shell，支持管道、I/O 重定向、内置命令，并配备现代化的 Flask Web 演示界面。
+
+## 运行截图
+
+### P5 主题界面
+![P5 Interface](docs/images/p5_interface.png)
+
+### CLI 测试界面
+![CLI Interface](docs/images/cli_interface.png)
 
 ## 核心特性
 
@@ -19,7 +27,8 @@
 - **彩色输出**：`xls` 支持 ANSI 彩色显示
 
 ### 现代化 UI
-- **Streamlit Web 界面**：交互式网页终端模拟器
+- **P5 主题 Web 界面**：Persona 5 风格的交互式网页终端
+- **CLI 测试模式**：简约暗色命令行界面
 - **一键演示**：预配置的演示按钮
 - **实时输出**：命令执行可视化
 - **文件工作区**：集成文件浏览器
@@ -28,29 +37,37 @@
 
 ### 环境要求
 ```bash
-# Linux/Unix 系统
+# Linux/Unix 系统 (推荐 WSL)
 gcc make python3 pip
 ```
 
 ### 编译运行
 ```bash
 # 克隆项目
-git clone https://github.com/YOUR_USERNAME/xshell.git
-cd xshell
+git clone https://github.com/AsakaTigar/unix-shell-xhell.git
+cd unix-shell-xhell
 
 # 编译 Shell
-cd xhell
+cd p5_interface/xhell
 make
 ./xhell
 ```
 
-### 启动 Web 界面
+### 启动 Web 界面（最终版本）
 ```bash
-# 安装 Python 依赖
-pip install streamlit
+cd p5_interface
+./start.sh
 
-# 启动演示
-./start_demo.sh
+# 浏览器访问:
+# P5 主题界面: http://localhost:8505
+# CLI 测试界面: http://localhost:8505/cli
+```
+
+### 启动 Streamlit 界面（v1 版本）
+```bash
+cd streamlit_demo
+pip install streamlit
+streamlit run app.py
 
 # 浏览器访问 http://localhost:8501
 ```
@@ -150,6 +167,18 @@ xcp nonexist.txt dst.txt 2> error.log
 
 ```
 xshell/
+├── p5_interface/           # 最终版本 - Flask + P5 主题
+│   ├── app.py             # Flask 后端
+│   ├── xhell_wrapper.py   # Shell 调用封装
+│   ├── templates/         # HTML 模板
+│   │   ├── index.html     # P5 主题界面
+│   │   └── cli.html       # CLI 测试界面
+│   ├── static/            # CSS + 资源文件
+│   ├── xhell/             # C 核心代码
+│   └── start.sh           # 一键启动脚本
+├── streamlit_demo/         # v1 版本 - Streamlit 界面
+│   ├── app.py
+│   └── xhell_wrapper.py
 ├── xhell/                  # C 核心实现
 │   ├── src/
 │   │   ├── main.c         # REPL 主循环
@@ -163,10 +192,7 @@ xshell/
 │   ├── include/
 │   │   └── xhell.h
 │   └── Makefile
-├── streamlit_demo/        # Web 演示界面
-│   ├── app.py
-│   └── xhell_wrapper.py
-├── start_demo.sh
+├── docs/images/            # 运行截图
 └── README.md
 ```
 
