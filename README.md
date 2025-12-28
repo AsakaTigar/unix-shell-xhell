@@ -16,6 +16,11 @@
 ![Streamlit 3](docs/images/streamlit_3.png)
 ![Streamlit 4](docs/images/streamlit_4.png)
 
+### 后端命令行（纯终端模式）
+![Backend CLI](docs/images/backend_cli.png)
+
+> 详细的依赖说明请参阅 [DEPENDENCIES.md](DEPENDENCIES.md)
+
 ## 核心特性
 
 ### Shell 基础功能
