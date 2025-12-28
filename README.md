@@ -4,11 +4,17 @@
 
 ## 运行截图
 
-### P5 主题界面
+### P5 主题界面（最终版本）
 ![P5 Interface](docs/images/p5_interface.png)
 
 ### CLI 测试界面
 ![CLI Interface](docs/images/cli_interface.png)
+
+### Streamlit 界面（v1 版本）
+![Streamlit 1](docs/images/streamlit_1.png)
+![Streamlit 2](docs/images/streamlit_2.png)
+![Streamlit 3](docs/images/streamlit_3.png)
+![Streamlit 4](docs/images/streamlit_4.png)
 
 ## 核心特性
 
