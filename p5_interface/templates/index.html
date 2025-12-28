@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/icon.png') }}">
+
+    <title>Xhell - Phantom Thieves Edition</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Using the styles directly from the repo -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/card.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button.css') }}">
+
+    <!-- Custom Overrides for Xhell -->
+    <style>
+        /* Override body to scroll if needed */
+        body {
+            overflow-y: auto;
+            background-color: #d6000e;
+            /* P5 Red */
+        }
+
+        /* Terminal Window - replacing canvas */
+        #terminal-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: rgba(0, 0, 0, 0.9);
+            border: 5px solid #fff;
+            transform: rotate(-1deg);
+            padding: 20px;
+            box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .term-header {
+            color: #d6000e;
+            background: #fff;
+            padding: 5px 15px;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 1.5em;
+            transform: skewX(-10deg);
+            display: inline-block;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        #terminal-output {
+            flex: 1;
+            font-family: 'Courier New', Courier, monospace;
+            color: #fff;
+            overflow-y: auto;
+            max-height: 500px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding-right: 10px;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 4px;
+        }
+
+        .cmd-text {
+            color: #fded00;
+            font-weight: bold;
+        }
+
+        .output-text {
+            color: #ddd;
+            white-space: pre-wrap;
+        }
+
+        .error-text {
+            color: #ff4444;
+            border-left: 4px solid #ff4444;
+            padding-left: 10px;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        /* Input Area - P5 Style */
+        .input-group {
+            display: flex;
+            border: 3px solid #fff;
+            transform: skewX(-5deg);
+            background: #000;
+        }
+
+        .input-group span {
+            background: #d6000e;
+            color: #fff;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        #cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            outline: none;
+        }
+
+        /* Command Palette Styling */
+        #editor {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            transform: rotate(1deg);
+            border: 3px solid #000;
+            box-shadow: 8px 8px 0 #d6000e;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+        }
+
+        .cmd-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .p5-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            font-family: sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transform: skewX(-10deg);
+            transition: all 0.2s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .p5-btn:hover {
+            background: #d6000e;
+            color: #fff;
+            transform: skewX(-10deg) scale(1.05);
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .p5-btn small {
+            display: block;
+            font-size: 0.7em;
+            opacity: 0.8;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
+        /* File Monitor */
+        #file-monitor {
+            position: fixed;
+            right: 30px;
+            top: 220px;
+            /* Moved down to avoid header overlap */
+            width: 220px;
+            background: #fff;
+            border: 3px solid #000;
+            padding: 10px;
+            transform: rotate(2deg);
+            box-shadow: -8px 8px 0 #000;
+            /* Distinct shadow */
+            z-index: 100;
+            max-height: 50vh;
+            overflow-y: auto;
+            display: none;
+            /* Hidden on small screens, or toggleable */
+        }
+
+        @media (min-width: 1400px) {
+            #file-monitor {
+                display: block;
+            }
+        }
+
+        .file-item {
+            padding: 8px 5px;
+            /* Slightly more padding for touch/click target but kept compact */
+            border-bottom: 2px solid #ccc;
+            /* Thicker line for notebook feel */
+            cursor: pointer;
+            font-family: 'KoreanKRSM', monospace;
+            /* Match P5 font */
+            font-size: 1.1em;
+            color: black;
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            background: #d6000e;
+            color: #fff;
+        }
+
+        h2,
+        h3 {
+            font-family: sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Loader Overlays */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 2em;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- P5 Header Style -->
+    <div id="header">
+        <div id="intro-icon">
+            <img src="{{ url_for('static', filename='assets/icon.png') }}">
+        </div>
+        <div id="intro-text">
+            <h2>Xhell P5 Interface</h2>
+            <h3
+                style="margin: 5px 0; font-size: 1.2em; background: black; color: white; display: inline-block; padding: 2px 10px; transform: skewX(-10deg);">
+                Linux 课程设计: XShell 终端系统
+            </h3>
+            <p>Take Your Shell Heart.<br>
+                Terminal control for the phantom thieves.</p>
+        </div>
+    </div>
+    <hr>
+
+    <!-- Main Terminal Area -->
+    <div id="terminal-container">
+        <div class="term-header">PHANTOM TERMINAL // LOG</div>
+
+        <div id="terminal-output">
+            <div class="log-entry output-text">System initialized. Waiting for input...</div>
+        </div>
+
+        <div class="input-group">
+            <span>INPUT ></span>
+            <input type="text" id="cmd-input" placeholder="Type command here..." autocomplete="off">
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 10px;">
+        <button class="action-btn" onclick="document.getElementById('cmd-input').focus()">
+            <i class="fa fa-terminal"></i> Focus Terminal
+        </button>
+    </div>
+
+    <!-- Command Palette (Replacing Editor) -->
+    <div id="editor">
+        <h2>Command Actions</h2>
+
+        <h3>1. File Operations</h3>
+        <div class="cmd-grid">
+            <button class="p5-btn" onclick="runCmd('xpwd')">XPWD <small>Show Path</small></button>
+            <button class="p5-btn" onclick="runCmd('xls')">XLS <small>List Files</small></button>
+            <button class="p5-btn" onclick="runCmd('xls -l')">XLS -L <small>Details</small></button>
+            <button class="p5-btn" onclick="runCmd('xtouch test.txt')">NEW FILE <small>Create</small></button>
+            <button class="p5-btn" onclick="runCmd('xcp src.txt dst.txt')">COPY <small>src -> dst</small></button>
+            <button class="p5-btn" onclick="runCmd('xmv old.txt new.txt')">MOVE <small>old -> new</small></button>
+            <button class="p5-btn" onclick="runCmd('xrm junk.txt')">DELETE <small>junk.txt</small></button>
+            <button class="p5-btn" onclick="runCmd('xcd ..')">BACK <small>Parent Dir</small></button>
+        </div>
+
+        <h3>2. I/O & Pipes</h3>
+        <div class="cmd-grid">
+            <button class="p5-btn" onclick="runCmd(`xecho 'Hello' > msg.txt`)">WRITE <small>></small></button>
+            <button class="p5-btn" onclick="runCmd(`xecho 'World' >> msg.txt`)">APPEND <small>>></small></button>
+            <button class="p5-btn" onclick="runCmd('xcat msg.txt')">READ <small>cat</small></button>
+            <button class="p5-btn" onclick="runCmd('xls | wc -l')">COUNT FILES <small>Pipe</small></button>
+            <button class="p5-btn" onclick="runCmd('xls -l | xsearch .txt')">SEARCH .TXT <small>Grep</small></button>
+        </div>
+
+        <h3>3. System & Bonus</h3>
+        <div class="cmd-grid">
+            <button class="p5-btn" onclick="runCmd('xhistory')">HISTORY <small>Log</small></button>
+            <button class="p5-btn" onclick="runCmd('xsysinfo')">SYS INFO <small>Status</small></button>
+            <button class="p5-btn" onclick="runCmd('xcalc 128 * 32')">CALC <small>Math</small></button>
+            <button class="p5-btn" style="background:var(--p5-red)" onclick="showReset()">RESET
+                <small>Danger</small></button>
+        </div>
+    </div>
+
+    <!-- File Monitor Sidebar -->
+    <div id="file-monitor">
+        <div style="background:black; color:white; padding:5px; text-align:center; font-weight:bold;">WORKSPACE</div>
+        <div id="file-list"></div>
+        <div style="margin-top:10px; border-top:2px solid black; padding-top:5px;">
+            <button onclick="refreshFiles()" style="width:100%">REFRESH</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Command History Logic
+        let cmdHistory = [];
+        let historyIndex = -1;
+
+        function runCmd(command) {
+            // Visual feedback
+            const term = document.getElementById('terminal-output');
+
+            // Add to client-side history
+            cmdHistory.unshift(command); // Add to beginning
+            historyIndex = -1; // Reset pointer
+
+            fetch('/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: command })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    addToTerminal(data);
+                    refreshFiles();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function addToTerminal(data) {
+            const term = document.getElementById('terminal-output');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            let html = `<div class="cmd-text">> ${data.command}</div>`;
+            if (data.stdout) html += `<div class="output-text">${data.stdout}</div>`;
+            if (data.stderr) html += `<div class="error-text">ERROR: ${data.stderr}</div>`;
+
+            entry.innerHTML = html;
+            term.appendChild(entry);
+            term.scrollTop = term.scrollHeight; // Auto scroll to bottom
+        }
+
+        function handleManualCmd() {
+            const input = document.getElementById('cmd-input');
+            const cmd = input.value.trim();
+            if (cmd) {
+                runCmd(cmd);
+                input.value = '';
+            }
+        }
+
+        document.getElementById('cmd-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') handleManualCmd();
+        });
+
+        function refreshFiles() {
+            fetch('/files')
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('file-list');
+                    list.innerHTML = '';
+                    if (data.files) {
+                        data.files.forEach(file => {
+                            const item = document.createElement('div');
+                            item.className = 'file-item';
+                            item.textContent = file;
+                            // Update: Click to xcat to terminal
+                            item.onclick = function () {
+                                runCmd(`xcat ${file}`);
+                            };
+                            list.appendChild(item);
+                        });
+                    }
+                });
+        }
+
+        function showReset() {
+            if (confirm("Format workspace?")) {
+                runCmd("rm -rf demo_workspace/*");
+            }
+        }
+
+        // Autocomplete & History Event Listeners
+        const commands = [
+            "xpwd", "xls", "xls -l", "xtouch", "xcp", "xmv", "xrm", "xcd",
+            "xecho", "xcat", "xhistory", "xsysinfo", "xcalc", "wc", "xsearch", "xhelp"
+        ];
+
+        document.getElementById('cmd-input').addEventListener('keydown', function (e) {
+            // Autocomplete
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const val = this.value;
+                const match = commands.find(cmd => cmd.startsWith(val));
+                if (match) {
+                    this.value = match + " "; // Add space for convenience
+                }
+            }
+
+            // History Navigation
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex < cmdHistory.length - 1) {
+                    historyIndex++;
+                    this.value = cmdHistory[historyIndex];
+                }
+            }
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    this.value = cmdHistory[historyIndex];
+                } else {
+                    historyIndex = -1;
+                    this.value = "";
+                }
+            }
+        });
+
+        // Init
+        refreshFiles();
+    </script>
+</body>
+
+</html>

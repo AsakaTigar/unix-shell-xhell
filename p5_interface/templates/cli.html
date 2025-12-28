@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xhell - CLI Mode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a1a2e;
+            color: #eee;
+            font-family: 'Consolas', 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #16213e;
+            padding: 15px 20px;
+            border-bottom: 2px solid #0f3460;
+        }
+        .header h1 {
+            font-size: 1.5em;
+            color: #e94560;
+        }
+        .header p {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+        .nav {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .nav a {
+            color: #4dc3ff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #4dc3ff;
+            border-radius: 3px;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .nav a:hover {
+            background: #4dc3ff;
+            color: #1a1a2e;
+        }
+        .terminal {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #0d0d0d;
+        }
+        .output-line {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .prompt {
+            color: #4dc3ff;
+        }
+        .cmd {
+            color: #fff;
+        }
+        .stdout {
+            color: #b5b5b5;
+            white-space: pre-wrap;
+            padding-left: 10px;
+        }
+        .stderr {
+            color: #ff6b6b;
+            white-space: pre-wrap;
+            padding-left: 10px;
+        }
+        .input-area {
+            display: flex;
+            background: #16213e;
+            padding: 15px 20px;
+            border-top: 2px solid #0f3460;
+        }
+        .input-area span {
+            color: #4dc3ff;
+            padding-right: 10px;
+            font-weight: bold;
+        }
+        .input-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1em;
+            outline: none;
+        }
+        .system-msg {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Xhell CLI Mode</h1>
+        <p>Original command-line interface for completeness testing</p>
+        <div class="nav">
+            <a href="/">P5 Interface</a>
+            <a href="/cli">CLI Mode</a>
+        </div>
+    </div>
+    
+    <div class="terminal" id="terminal">
+        <div class="output-line system-msg">// Xhell CLI initialized. Type commands below.</div>
+        <div class="output-line system-msg">// Type 'xhelp' for available commands.</div>
+    </div>
+    
+    <div class="input-area">
+        <span>[xshell]$</span>
+        <input type="text" id="cmd-input" placeholder="Enter command..." autocomplete="off" autofocus>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const input = document.getElementById('cmd-input');
+        let cmdHistory = [];
+        let historyIdx = -1;
+
+        function addOutput(command, stdout, stderr) {
+            const block = document.createElement('div');
+            block.className = 'output-line';
+            
+            let html = `<span class="prompt">[xshell]$</span> <span class="cmd">${escapeHtml(command)}</span>`;
+            if (stdout) {
+                html += `<div class="stdout">${escapeHtml(stdout)}</div>`;
+            }
+            if (stderr) {
+                html += `<div class="stderr">${escapeHtml(stderr)}</div>`;
+            }
+            block.innerHTML = html;
+            terminal.appendChild(block);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function runCommand(cmd) {
+            if (!cmd.trim()) return;
+            
+            cmdHistory.unshift(cmd);
+            historyIdx = -1;
+            
+            try {
+                const response = await fetch('/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: cmd })
+                });
+                const data = await response.json();
+                addOutput(cmd, data.stdout, data.stderr);
+            } catch (err) {
+                addOutput(cmd, '', 'Error: ' + err.message);
+            }
+        }
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = this.value.trim();
+                if (cmd) {
+                    runCommand(cmd);
+                    this.value = '';
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIdx < cmdHistory.length - 1) {
+                    historyIdx++;
+                    this.value = cmdHistory[historyIdx];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIdx > 0) {
+                    historyIdx--;
+                    this.value = cmdHistory[historyIdx];
+                } else {
+                    historyIdx = -1;
+                    this.value = '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

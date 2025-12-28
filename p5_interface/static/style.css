@@ -1,0 +1,306 @@
+:root {
+    --p5-red: #d6000e;
+    --p5-black: #000;
+    --p5-white: #fff;
+    --p5-gray: #1f1f1f;
+    --p5-yellow: #fded00;
+    --font-heading: 'Bebas Neue', sans-serif;
+    --font-hand: 'Permanent Marker', cursive;
+    --font-mono: 'Fira Code', monospace;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--p5-red);
+    font-family: var(--font-heading);
+    color: var(--p5-black);
+    overflow: hidden;
+    height: 100vh;
+    background-image: 
+        repeating-linear-gradient(45deg, #cc0000 0, #cc0000 10px, transparent 10px, transparent 20px);
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 300px;
+    background: var(--p5-black);
+    color: var(--p5-white);
+    transform: skewX(-5deg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 10px 10px 0 rgba(0,0,0,0.5);
+    border: 3px solid var(--p5-white);
+    margin-left: 20px;
+}
+
+.sidebar-header {
+    transform: skewX(5deg);
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--p5-white);
+    padding-bottom: 10px;
+}
+
+.sidebar-header h1 {
+    font-size: 3em;
+    margin: 0;
+    color: var(--p5-white);
+    text-shadow: 2px 2px 0 var(--p5-red);
+}
+
+.subtitle {
+    font-family: var(--font-hand);
+    color: var(--p5-red);
+    font-size: 1.2em;
+    background: var(--p5-white);
+    display: inline-block;
+    padding: 2px 10px;
+    transform: rotate(-2deg);
+}
+
+.command-groups {
+    transform: skewX(5deg);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.group-title {
+    background: var(--p5-white);
+    color: var(--p5-black);
+    padding: 5px 10px;
+    font-size: 1.2em;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    transform: skewX(-10deg);
+    display: inline-block;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+button {
+    background: transparent;
+    border: 2px solid var(--p5-white);
+    color: var(--p5-white);
+    font-family: var(--font-heading);
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 8px;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    transform: skewX(-5deg);
+}
+
+button:hover {
+    background: var(--p5-white);
+    color: var(--p5-black);
+    transform: skewX(-5deg) translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--p5-red);
+    font-weight: bold;
+}
+
+button.danger:hover {
+    background: var(--p5-red);
+    color: var(--p5-white);
+    border-color: var(--p5-red);
+}
+
+/* --- MAIN AREA --- */
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* TERMINAL */
+.terminal-section {
+    flex: 2;
+    background: rgba(0, 0, 0, 0.85);
+    border: 3px solid var(--p5-white);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transform: skewX(-2deg);
+    box-shadow: 10px 10px 0 var(--p5-black);
+}
+
+.section-header {
+    font-size: 1.5em;
+    color: var(--p5-white);
+    background: var(--p5-red);
+    padding: 5px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    clip-path: polygon(0 0, 95% 0, 100% 100%, 0 100%);
+}
+
+.terminal-window {
+    flex: 1;
+    background: transparent;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    color: var(--p5-white);
+    padding: 10px;
+    border: 1px dashed #444;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.log-entry {
+    margin-bottom: 8px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+}
+
+.cmd-text {
+    color: var(--p5-yellow);
+    font-weight: bold;
+}
+
+.output-text {
+    color: #ddd;
+    white-space: pre-wrap;
+    margin-top: 2px;
+}
+
+.error-text {
+    color: #ff4444;
+    background: rgba(255,0,0,0.1);
+    padding: 2px 5px;
+    border-left: 3px solid red;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.prompt {
+    color: var(--p5-red);
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+#cmd-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--p5-white);
+    color: var(--p5-white);
+    font-family: var(--font-mono);
+    font-size: 1.2em;
+    padding: 5px;
+}
+
+#cmd-input:focus {
+    outline: none;
+    border-color: var(--p5-red);
+}
+
+/* FILE MONITOR */
+.file-section {
+    flex: 1;
+    background: var(--p5-white);
+    color: var(--p5-black);
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    transform: rotate(1deg);
+    box-shadow: 8px 8px 0 var(--p5-black);
+    border: 3px solid var(--p5-black);
+}
+
+.file-section .section-header {
+    background: var(--p5-black);
+    color: var(--p5-white);
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    transform: rotate(-2deg);
+    font-size: 1.2em;
+}
+
+.file-list {
+    width: 30%;
+    border-right: 2px solid var(--p5-black);
+    overflow-y: auto;
+    padding-right: 10px;
+    font-family: var(--font-mono);
+}
+
+.file-item {
+    padding: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.file-item:hover {
+    background: var(--p5-red);
+    color: var(--p5-white);
+    font-weight: bold;
+}
+
+.file-viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.viewer-header {
+    background: var(--p5-black);
+    color: var(--p5-white);
+    padding: 2px 10px;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+#file-content {
+    background: #f0f0f0;
+    padding: 10px;
+    flex: 1;
+    overflow: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    border: 1px solid #ccc;
+    margin: 0;
+}
+
+/* DECORATION */
+.bg-shape {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.shape-1 {
+    width: 500px;
+    height: 300px;
+    background: var(--p5-black);
+    bottom: -50px;
+    right: -100px;
+    transform: rotate(-15deg);
+    clip-path: polygon(10% 0, 100% 20%, 80% 100%, 0 80%);
+}
